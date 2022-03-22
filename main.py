@@ -18,7 +18,7 @@ class Voiture(pygame.sprite.Sprite):
 		if self.direction == -1:
 			self.angle += self.rotation
 
-		self.image = pygame.transform.rotozoom(self.voiture,self.angle,0.25)
+		self.image = pygame.transform.rotozoom(self.voiture,self.angle,0)
 		self.rect = self.image.get_rect(center = self.rect.center)
 
 	def get_rotation(self):
