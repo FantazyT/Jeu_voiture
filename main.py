@@ -2,10 +2,12 @@ import pygame,sys
 
 class Voiture(pygame.sprite.Sprite):
 	def __init__(self):
+		widthVoiture = 640
+		heightVoiture = 360
 		super().__init__()
 		self.voiture = pygame.image.load('Voiture.png')
 		self.image = self.voiture
-		self.rect = self.image.get_rect(center = (640,360))
+		self.rect = self.image.get_rect(center = (widthVoiture,heightVoiture))
 		self.angle = 0
 		self.rotation = 3
 		self.direction = 0
@@ -29,7 +31,11 @@ class Voiture(pygame.sprite.Sprite):
 
 	def accelerate(self):
 		if self.active:
-			self.rect.center += self.forward * 5
+			if self.rect.centerx < 1280 and self.rect.centery < 720 :
+				self.rect.center += self.forward * 5
+			else :
+				self.rect.center -= self.forward * 5
+			
 
 	def update(self):
 		self.set_rotation()
@@ -38,10 +44,12 @@ class Voiture(pygame.sprite.Sprite):
 
 class Voiture2(pygame.sprite.Sprite):
 	def __init__(self):
+		widthVoiture = 640
+		heightVoiture = 360
 		super().__init__()
 		self.voiture = pygame.image.load('Voiture.png')
 		self.image = self.voiture
-		self.rect = self.image.get_rect(center = (640,360))
+		self.rect = self.image.get_rect(center = (widthVoiture,heightVoiture))
 		self.angle = 0
 		self.rotation = 3
 		self.direction = 0
@@ -65,7 +73,10 @@ class Voiture2(pygame.sprite.Sprite):
 
 	def accelerate(self):
 		if self.active:
-			self.rect.center += self.forward * 5
+			if -1280 < self.rect.centerx < 1280 and -720 < self.rect.centery < 720 :
+				self.rect.center += self.forward * 5
+			else :
+				self.rect.center -= self.forward * 5
 
 	def update(self):
 		self.set_rotation()
@@ -73,7 +84,11 @@ class Voiture2(pygame.sprite.Sprite):
 		self.accelerate()
 
 pygame.init()
-screen = pygame.display.set_mode((1280,720))
+
+width = 1280
+height = 720
+
+screen = pygame.display.set_mode((width,height))
 clock = pygame.time.Clock()
 bg_track = pygame.image.load('Circuit.png')
 
@@ -104,9 +119,12 @@ while True:
 			if event.key == pygame.K_o: Voiture2.sprite.active = False
 
 	screen.blit(bg_track,(0,0))
+
 	Voiture.draw(screen)
 	Voiture.update()
+
 	Voiture2.draw(screen)
 	Voiture2.update()
+
 	pygame.display.update()
 	clock.tick(300000)
