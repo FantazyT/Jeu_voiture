@@ -109,4 +109,4 @@ while True:
 	Voiture2.draw(screen)
 	Voiture2.update()
 	pygame.display.update()
-	clock.tick(300000)
+	clock.tick(300000) 
