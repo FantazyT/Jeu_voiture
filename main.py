@@ -31,10 +31,19 @@ class Voiture(pygame.sprite.Sprite):
 
 	def accelerate(self):
 		if self.active:
-			if self.rect.centerx < 1280 and self.rect.centery < 720 :
+			if 0 < self.rect.centerx < 1280 and 0 < self.rect.centery < 720 :
 				self.rect.center += self.forward * 5
 			else :
-				self.rect.center -= self.forward * 5
+				if self.rect.centerx == self.rect.centerx and self.rect.centery >= 721 :	
+					self.rect.centery = 0
+				if self.rect.centerx == self.rect.centerx and self.rect.centery <= -1 :
+					self.rect.centery = 720
+				if self.rect.centerx >= 1281 and self.rect.centery == self.rect.centery :
+					self.rect.centerx = 0
+				if self.rect.centerx <= -1 and self.rect.centery == self.rect.centery :
+					self.rect.centerx = 1280
+				else : 
+					self.rect.center += self.forward * 5
 			
 
 	def update(self):
@@ -73,10 +82,19 @@ class Voiture2(pygame.sprite.Sprite):
 
 	def accelerate(self):
 		if self.active:
-			if -1280 < self.rect.centerx < 1280 and -720 < self.rect.centery < 720 :
+			if 0 < self.rect.centerx < 1280 and 0 < self.rect.centery < 720 :
 				self.rect.center += self.forward * 5
 			else :
-				self.rect.center -= self.forward * 5
+				if self.rect.centerx == self.rect.centerx and self.rect.centery >= 721 :	
+					self.rect.centery = 0
+				if self.rect.centerx == self.rect.centerx and self.rect.centery <= -1 :
+					self.rect.centery = 720
+				if self.rect.centerx >= 1281 and self.rect.centery == self.rect.centery :
+					self.rect.centerx = 0
+				if self.rect.centerx <= -1 and self.rect.centery == self.rect.centery :
+					self.rect.centerx = 1280
+				else : 
+					self.rect.center += self.forward * 5
 
 	def update(self):
 		self.set_rotation()
