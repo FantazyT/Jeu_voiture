@@ -102,6 +102,11 @@ class Voiture2(pygame.sprite.Sprite):
 		self.accelerate()
 
 pygame.init()
+pygame.mixer.init()
+
+file = "theme.mp3"
+pygame.mixer.music.load(file)
+pygame.mixer.music.play(-1)
 
 width = 1280
 height = 720
@@ -114,6 +119,7 @@ Voiture = pygame.sprite.GroupSingle(Voiture())
 Voiture2 = pygame.sprite.GroupSingle(Voiture2())
 
 while True:
+
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit()
