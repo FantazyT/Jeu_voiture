@@ -5,10 +5,24 @@ from turtle import position
 import pygame,sys
 from random import randint
 
-counter = 3
+counter = 30
 
 score1 = 0
 score2 = 0
+
+victoireR = "La voiture rouge à gagner appuyer sur R pour recommencer"
+victoireB = "La voiture bleu à gagner appuyer sur R pour recommencer"
+égalité = "C'est une égalité appuyer sur R pour recommencer"
+
+class Pigeon(pygame.sprite.Sprite):
+	def __init__(self):
+		super().__init__()
+		self.pigeon = pygame.image.load('pigeon.png')
+		self.pigeon = pygame.transform.scale(self.pigeon, (50, 50))
+		self.image = self.pigeon	
+		self.rect = self.image.get_rect(center = (randint(1,1279),randint(1,719)))
+		self.active = False
+
 
 class Voiture(pygame.sprite.Sprite):
 	def __init__(self):
@@ -44,9 +58,6 @@ class Voiture(pygame.sprite.Sprite):
 			if counter == 0 :
 				self.rect.centerx = 630
 				self.rect.centery = 360
-			if self.rect.center == pigeonPosition :
-				score1 += 1
-				self.rect.center -= self.forward * 5
 
 			if 0 < self.rect.centerx < 1280 and 0 < self.rect.centery < 720 :
 				self.rect.center += self.forward * 5
@@ -120,6 +131,9 @@ class Voiture2(pygame.sprite.Sprite):
 		self.get_rotation()
 		self.accelerate()
 
+
+		
+
 pygame.init()
 pygame.mixer.init()
 
@@ -127,44 +141,58 @@ file = "theme.mp3"
 pygame.mixer.music.load(file)
 pygame.mixer.music.play(-1)
 
+file2 = pygame.mixer.Sound("pigeon.mp3")
+
 width = 1280
 height = 720
 
 screen = pygame.display.set_mode((width,height))
 bg_track = pygame.image.load('Circuit.png')
 
-Voiture = pygame.sprite.GroupSingle(Voiture())
-Voiture2 = pygame.sprite.GroupSingle(Voiture2())
+voiture = pygame.sprite.GroupSingle(Voiture())
+voiture2 = pygame.sprite.GroupSingle(Voiture2())
+pigeon = pygame.sprite.GroupSingle(Pigeon())
 
 clock = pygame.time.Clock()
 font = pygame.font.SysFont(None, 100)
+font2 = pygame.font.SysFont(None, 60)
 text = font.render(str(counter), True, (0, 128, 0))
-
-timer_event = pygame.USEREVENT+1
-pygame.time.set_timer(timer_event, 1000)
 
 textVoiture = font.render(str(score1), True, (128, 0, 0))
 textVoiture2 = font.render(str(score2), True, (0, 0, 128))
 
-pigeon = pygame.image.load('pigeon.png')
-pigeon = pygame.transform.scale(pigeon, (50, 50))
-
-pigeonPositionx = randint(1,1279)
-pigeonPositiony = randint(1,719)
-
-pigeonPosition = (pigeon.get_rect().centerx, pigeon.get_rect().centery)
-
+timer_event = pygame.USEREVENT+1
+pygame.time.set_timer(timer_event, 1000)
 
 run = True,
 while run:
 	clock.tick(60)
 	screen.blit(bg_track,(0,0))
 	if counter != 0 : 
-		if pigeonPositionx != 0 and pigeonPositiony != 0 :
-			screen.blit(pigeon, (pigeonPositionx,pigeonPositiony))
+		pigeon.draw(screen)
+		if pygame.sprite.groupcollide(pigeon, voiture, True, False):
+			file2.play()
+			score1 += 1
+			textVoiture = font.render(str(score1), True, (128, 0, 0))
+			pigeon = pygame.sprite.GroupSingle(Pigeon())
+			pigeon.draw(screen)
+		if pygame.sprite.groupcollide(pigeon, voiture2, True, False):
+			file2.play()
+			score2 += 1
+			textVoiture2 = font.render(str(score2), True, (0, 0, 128))
+			pigeon = pygame.sprite.GroupSingle(Pigeon())
+			pigeon.draw(screen)
+	else :
+		if score1 < score2 :
+			textVictoire = font2.render(str(victoireB), True, (0, 0, 128))
+			screen.blit(textVictoire, (0,360))
+		elif score2 < score1 :
+			textVictoire = font2.render(str(victoireR), True, (128, 0, 0))
+			screen.blit(textVictoire, (0,360))
 		else :
-			pigeonPositionx = randint(1,1279)
-			pigeonPositiony = randint(1,719)
+			textVictoire = font2.render(str(égalité), True, (0, 128, 0))
+			screen.blit(textVictoire, (0,360))
+		
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit()
@@ -177,28 +205,28 @@ while run:
 				
 		if counter != 0 :
 			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_d: Voiture.sprite.direction += 1
-				if event.key == pygame.K_q: Voiture.sprite.direction -= 1
-				if event.key == pygame.K_z: Voiture.sprite.active = True
+				if event.key == pygame.K_d: voiture.sprite.direction += 1
+				if event.key == pygame.K_q: voiture.sprite.direction -= 1
+				if event.key == pygame.K_z: voiture.sprite.active = True
 
-				if event.key == pygame.K_m: Voiture2.sprite.direction += 1
-				if event.key == pygame.K_k: Voiture2.sprite.direction -= 1
-				if event.key == pygame.K_o: Voiture2.sprite.active = True
+				if event.key == pygame.K_m: voiture2.sprite.direction += 1
+				if event.key == pygame.K_k: voiture2.sprite.direction -= 1
+				if event.key == pygame.K_o: voiture2.sprite.active = True
 
 			if event.type == pygame.KEYUP:
-				if event.key == pygame.K_d: Voiture.sprite.direction -= 1
-				if event.key == pygame.K_q: Voiture.sprite.direction += 1 
-				if event.key == pygame.K_z: Voiture.sprite.active = False
+				if event.key == pygame.K_d: voiture.sprite.direction -= 1
+				if event.key == pygame.K_q: voiture.sprite.direction += 1 
+				if event.key == pygame.K_z: voiture.sprite.active = False
 
-				if event.key == pygame.K_m: Voiture2.sprite.direction -= 1
-				if event.key == pygame.K_k: Voiture2.sprite.direction += 1
-				if event.key == pygame.K_o: Voiture2.sprite.active = False
+				if event.key == pygame.K_m: voiture2.sprite.direction -= 1
+				if event.key == pygame.K_k: voiture2.sprite.direction += 1
+				if event.key == pygame.K_o: voiture2.sprite.active = False
 
 		else :
-			Voiture.sprite.direction += 0
-			Voiture2.sprite.direction += 0
-			Voiture2.sprite.active = False
-			Voiture.sprite.active = False
+			voiture.sprite.direction += 0
+			voiture2.sprite.direction += 0
+			voiture2.sprite.active = False
+			voiture.sprite.active = False	
 
 			if event.type == pygame.KEYDOWN :
 				if event.key == pygame.K_r: 
@@ -210,15 +238,19 @@ while run:
 					
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_r: 
+					score1 = 0
+					score2 = 0
+					textVoiture = font.render(str(score1), True, (128, 0, 0))
+					textVoiture2 = font.render(str(score1), True, (128, 0, 0))
 					counter = 30
 					timer_event = pygame.USEREVENT+1
 					pygame.time.set_timer(timer_event, 1000)
 
-	Voiture.draw(screen)
-	Voiture.update()
+	voiture.draw(screen)
+	voiture.update()
 
-	Voiture2.draw(screen)
-	Voiture2.update()
+	voiture2.draw(screen)
+	voiture2.update()
 	
 
 	screen.blit(text, (640,1))
